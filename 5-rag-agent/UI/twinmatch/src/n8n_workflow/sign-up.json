@@ -1,0 +1,51 @@
+{
+  "main": [
+    {
+      "parameters": {
+        "method": "POST",
+        "path": "user-signup",
+        "responseCode": 200
+      },
+      "type": "n8n-nodes-base.webhook",
+      "position": [100, 300]
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "schema": "public",
+        "table": "users"
+      },
+      "type": "n8n-nodes-base.supabase",
+      "position": [300, 300],
+      "credentials": {
+        "supabaseUrl": "your-supabase-url",
+        "supabaseKey": "your-supabase-key"
+      }
+    },
+    {
+      "parameters": {
+        "values": {
+          "email": "={{$json.email}}",
+          "password": "={{$('hash').json.hash}}"
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "algorithm": "SHA256",
+        "data": "={{$json.password}}"
+      },
+      "type": "n8n-nodes-base.hash",
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "responseBody": "={{JSON.stringify({success: true, message: 'User created successfully'})}}"
+      },
+      "type": "n8n-nodes-base.responseData",
+      "position": [700, 300]
+    }
+  ]
+}
